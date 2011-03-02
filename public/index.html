@@ -33,7 +33,8 @@
           scrollwheel: false
         };
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-        overlay = new ImageOverlay(map, 'heart.png');
+        overlay = new HeatMapOverlay(map);
+        //overlay = new ImageOverlay(map, 'heart.png');
 
 
         var ws = null
