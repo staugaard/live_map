@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0px; padding: 0px }
+    </style>
+    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'></script>
+    <script src='js/swfobject.js'></script>
+    <script src='js/FABridge.js'></script>
+    <script src='js/web_socket.js'></script>
+    <script src='js/canvas_overlay.js'></script>
+    <script>
+      var map = null;
+      var overlay = null;
+
+      var sf = new google.maps.LatLng(37.779399,-122.420654);
+
+      $(document).ready(function() {
+        var myOptions = {
+          center: new google.maps.LatLng(30,0),
+          mapTypeId: google.maps.MapTypeId.SATELLITE,
+          keyboardShortcuts: false,
+          zoom: 2,
+          maxZoom: 2,
+          minZoom: 2,
+          mapTypeControl: false,
+          panControl: false,
+          scaleControl: false,
+          streetViewControl: false,
+          zoomControl: false,
+          scrollwheel: false
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+        overlay = new CanvasOverlay(map);
+
+
+        var ws = null
+
+        function liveMapConnect() {
+          console.log('connecting...');
+          ws = new WebSocket("ws://localhost:8080/");
+
+          ws.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            overlay.addDot(data[0], data[1]);
+          };
+
+          ws.onclose = function() {
+            console.log("socket closed");
+          };
+
+          ws.onopen = function() {
+            console.log("connected...");
+          };
+        };
+
+        liveMapConnect();
+      });
+    </script>
+  </head>
+  <body>
+    <p style="margin: auto; text-align: center;">
+      Ticket Creation
+      <div id="map_canvas" style="margin: auto; text-align: center; width:1024px; height:600px;"></div>
+    </p>
+  </body>
+</html>
