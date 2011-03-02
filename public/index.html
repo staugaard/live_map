@@ -20,7 +20,7 @@
       $(document).ready(function() {
         var myOptions = {
           center: new google.maps.LatLng(30,0),
-          mapTypeId: google.maps.MapTypeId.SATELLITE,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
           keyboardShortcuts: false,
           zoom: 2,
           maxZoom: 2,
@@ -33,7 +33,7 @@
           scrollwheel: false
         };
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-        overlay = new CanvasOverlay(map);
+        overlay = new ImageOverlay(map, 'heart.png');
 
 
         var ws = null

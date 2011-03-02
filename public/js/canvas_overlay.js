@@ -1,8 +1,9 @@
-function CanvasOverlay(map) {
-  this.setMap(map);
-  this.heart = document.createElement("img");
-  this.heart.setAttribute('src', 'heart.png');
-}
+/*
+  Base Canvas Overlay.
+*/
+
+function CanvasOverlay() {
+};
 
 CanvasOverlay.prototype = new google.maps.OverlayView();
 
@@ -28,5 +29,41 @@ CanvasOverlay.prototype.draw = function() {
 
 CanvasOverlay.prototype.addDot = function(longitude, latitude) {
   var point = this.getProjection().fromLatLngToDivPixel(new google.maps.LatLng(longitude, latitude));
+
+  if (this.beforeDrawDot) {
+    this.beforeDrawDot(point);
+  };
+
+  var image = this.canvasContext.getImageData(0, 0, 1024, 600);
+  var imageData = image.data;
+  var length = imageData.length;
+  for(var i = 3; i < length; i += 4) {
+    imageData[i] = imageData[i] * 0.95;
+  };
+  image.data = imageData;
+  this.canvasContext.putImageData(image, 0, 0);
+
+  //this.canvasContext.putImageData(imageData,0,0);
+  this.drawDot(point);
+
+  if (this.afterDrawDot) {
+    this.afterDrawDot(point);
+  };
+};
+
+
+/*
+  Image Overlay.
+*/
+
+function ImageOverlay(map, image_src) {
+  this.setMap(map);
+  this.heart = document.createElement("img");
+  this.heart.setAttribute('src', image_src);
+};
+
+ImageOverlay.prototype = new CanvasOverlay();
+
+ImageOverlay.prototype.drawDot = function(point) {
   this.canvasContext.drawImage(this.heart, point.x - 8, point.y - 8);
 };
