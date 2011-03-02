@@ -34,15 +34,6 @@ CanvasOverlay.prototype.addDot = function(longitude, latitude) {
     this.beforeDrawDot(point);
   };
 
-  var image = this.canvasContext.getImageData(0, 0, 1024, 600);
-  var imageData = image.data;
-  var length = imageData.length;
-  for(var i = 3; i < length; i += 4) {
-    imageData[i] = imageData[i] * 0.95;
-  };
-  image.data = imageData;
-  this.canvasContext.putImageData(image, 0, 0);
-
   //this.canvasContext.putImageData(imageData,0,0);
   this.drawDot(point);
 
@@ -58,12 +49,23 @@ CanvasOverlay.prototype.addDot = function(longitude, latitude) {
 
 function ImageOverlay(map, image_src) {
   this.setMap(map);
-  this.heart = document.createElement("img");
-  this.heart.setAttribute('src', image_src);
+  this.dot = document.createElement("img");
+  this.dot.setAttribute('src', image_src);
 };
 
 ImageOverlay.prototype = new CanvasOverlay();
 
+ImageOverlay.prototype.beforeDrawDot = function(point) {
+  var image = this.canvasContext.getImageData(0, 0, 1024, 600);
+  var imageData = image.data;
+  var length = imageData.length;
+  for(var i = 3; i < length; i += 4) {
+    imageData[i] = imageData[i] * 0.95;
+  };
+  image.data = imageData;
+  this.canvasContext.putImageData(image, 0, 0);
+};
+
 ImageOverlay.prototype.drawDot = function(point) {
-  this.canvasContext.drawImage(this.heart, point.x - 8, point.y - 8);
+  this.canvasContext.drawImage(this.dot, point.x - 8, point.y - 8);
 };
