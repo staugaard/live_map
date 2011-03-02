@@ -4,6 +4,8 @@
 
 function CanvasOverlay() {
   this.fade = 0;
+  this.width = 1024;
+  this.height = 600;
 };
 
 CanvasOverlay.prototype = new google.maps.OverlayView();
@@ -16,7 +18,7 @@ CanvasOverlay.prototype.setOptions = function(options) {
 
 CanvasOverlay.prototype.doFade = function() {
   if (this.fade > 0) {
-    var image = this.canvasContext.getImageData(0, 0, 1024, 600);
+    var image = this.canvasContext.getImageData(0, 0, this.width, this.height);
     var imageData = image.data;
     var length = imageData.length;
     var value;
@@ -34,8 +36,8 @@ CanvasOverlay.prototype.draw = function() {
   var canvas = this.canvas_;
   if (!canvas) {
     canvas = document.createElement("canvas");
-    canvas.setAttribute("width", "1024px");
-    canvas.setAttribute("height", "600px");
+    canvas.setAttribute("width", this.width + "px");
+    canvas.setAttribute("height", this.height + "px");
     canvas.style.position = "absolute";
     // Set the overlay's canvas_ property to this canvas
     this.canvas_ = canvas;
@@ -109,7 +111,7 @@ HeatMapOverlay.prototype.drawDot = function(point) {
 };
 
 HeatMapOverlay.prototype.colorize = function(x,y,x2) {
-  var image = this.canvasContext.getImageData(0, 0, 1024, 600);
+  var image = this.canvasContext.getImageData(0, 0, this.width, this.height);
   // some performance tweaks
   var imageData = image.data;
   var length = imageData.length;
