@@ -3,9 +3,30 @@
 */
 
 function CanvasOverlay() {
+  this.fade = 0;
 };
 
 CanvasOverlay.prototype = new google.maps.OverlayView();
+
+CanvasOverlay.prototype.setOptions = function(options) {
+  if (options.fade) {
+    this.fade = options.fade;
+  };
+};
+
+CanvasOverlay.prototype.doFade = function() {
+  if (this.fade > 0) {
+    var image = this.canvasContext.getImageData(0, 0, 1024, 600);
+    var imageData = image.data;
+    var length = imageData.length;
+    var value;
+    for(var i = 3; i < length; i += 4) {
+      imageData[i] = imageData[i] * (1.0 - this.fade);
+    };
+    image.data = imageData;
+    this.canvasContext.putImageData(image, 0, 0);
+  };
+};
 
 CanvasOverlay.prototype.draw = function() {
   var me = this;
@@ -30,6 +51,8 @@ CanvasOverlay.prototype.draw = function() {
 CanvasOverlay.prototype.addDot = function(longitude, latitude) {
   var point = this.getProjection().fromLatLngToDivPixel(new google.maps.LatLng(longitude, latitude));
 
+  this.doFade();
+
   if (this.beforeDrawDot) {
     this.beforeDrawDot(point);
   };
@@ -47,24 +70,14 @@ CanvasOverlay.prototype.addDot = function(longitude, latitude) {
   Image Overlay.
 */
 
-function ImageOverlay(map, image_src) {
+function ImageOverlay(map, options) {
   this.setMap(map);
+  this.setOptions(options);
   this.dot = document.createElement("img");
-  this.dot.setAttribute('src', image_src);
+  this.dot.setAttribute('src', options.src);
 };
 
 ImageOverlay.prototype = new CanvasOverlay();
-
-ImageOverlay.prototype.beforeDrawDot = function(point) {
-  var image = this.canvasContext.getImageData(0, 0, 1024, 600);
-  var imageData = image.data;
-  var length = imageData.length;
-  for(var i = 3; i < length; i += 4) {
-    imageData[i] = imageData[i] * 0.95;
-  };
-  image.data = imageData;
-  this.canvasContext.putImageData(image, 0, 0);
-};
 
 ImageOverlay.prototype.drawDot = function(point) {
   this.canvasContext.drawImage(this.dot, point.x - 8, point.y - 8);
@@ -75,22 +88,11 @@ ImageOverlay.prototype.drawDot = function(point) {
   Heat Map Overlay
 */
 
-function HeatMapOverlay(map) {
+function HeatMapOverlay(map, options) {
   this.setMap(map);
+  this.setOptions(options);
 };
 HeatMapOverlay.prototype = new CanvasOverlay();
-
-HeatMapOverlay.prototype.beforeDrawDot = function(point) {
-  var image = this.canvasContext.getImageData(0, 0, 1024, 600);
-  var imageData = image.data;
-  var length = imageData.length;
-  var value;
-  for(var i = 3; i < length; i += 4) {
-    imageData[i] = imageData[i] * 0.98;
-  };
-  image.data = imageData;
-  this.canvasContext.putImageData(image, 0, 0);
-};
 
 HeatMapOverlay.prototype.drawDot = function(point) {
   var radius1 = 10;
