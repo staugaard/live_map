@@ -1,0 +1,5 @@
+live_map.rb uses these environement variables:
+
+PORT:       the web socket port (default: 8080)
+REDIS_HOST: the redis host      (default: localhost)
+REDIS_PORT: the redis port      (default: 6379)
