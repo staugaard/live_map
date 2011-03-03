@@ -13,7 +13,7 @@
     <script src='js/canvas_overlay.js'></script>
     <script>
       var map = null;
-      var overlay = null;
+      var overlays = [];
 
       var sf = new google.maps.LatLng(37.779399,-122.420654);
 
@@ -33,8 +33,10 @@
           scrollwheel: false
         };
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-        overlay = new HeatMapOverlay(map, {fade: 0.02});
-        //overlay = new ImageOverlay(map, {src: 'heart.png', fade: 0.04});
+
+        overlays.push(new HeatMapOverlay(map, {fade: 0.01}));
+        //overlays.push(new ImageOverlay(map, {src: 'heart.png', fade: 0.1}));
+        overlays.push(new MarkerOverlay(map, {maxMarkers: 50}));
 
 
         var ws = null
@@ -45,7 +47,9 @@
 
           ws.onmessage = function(e) {
             var data = JSON.parse(e.data);
-            overlay.addDot(data[0], data[1]);
+            for (var i = 0; i < overlays.length; i++) {
+              overlays[i].addDot(data[0], data[1]);
+            };
           };
 
           ws.onclose = function() {

@@ -30,6 +30,11 @@ CanvasOverlay.prototype.doFade = function() {
   };
 };
 
+CanvasOverlay.prototype.fadeLoop = function() {
+  var that = this;
+  setInterval(function() { that.doFade(); }, 500);
+};
+
 CanvasOverlay.prototype.draw = function() {
   var me = this;
 
@@ -47,13 +52,15 @@ CanvasOverlay.prototype.draw = function() {
 
     var panes = this.getPanes();
     panes.overlayImage.appendChild(canvas);
+
+    if (this.fade > 0) {
+      this.fadeLoop();
+    };
   };
 };
 
-CanvasOverlay.prototype.addDot = function(longitude, latitude) {
-  var point = this.getProjection().fromLatLngToDivPixel(new google.maps.LatLng(longitude, latitude));
-
-  this.doFade();
+CanvasOverlay.prototype.addDot = function(latitude, longitude) {
+  var point = this.getProjection().fromLatLngToDivPixel(new google.maps.LatLng(latitude, longitude));
 
   if (this.beforeDrawDot) {
     this.beforeDrawDot(point);
@@ -155,4 +162,33 @@ HeatMapOverlay.prototype.colorize = function(x,y,x2) {
   // after the manipulation process we have to set the manipulated data to the ImageData object
   image.data = imageData;
   this.canvasContext.putImageData(image, 0, 0);
+};
+
+
+/*
+  Marker Overlay
+*/
+
+function MarkerOverlay(map, options) {
+  this.map = map;
+  this.maxMarkers = options.maxMarkers;
+  this.markers = [];
+};
+
+MarkerOverlay.prototype.addDot = function(latitude, longitude) {
+  var marker = null;
+  if (this.maxMarkers && this.markers.length > this.maxMarkers) {
+    marker = this.markers.shift();
+    marker.setMap(null);
+  } else {
+    marker = new google.maps.Marker({clickable: false});
+  };
+
+  marker.setPosition(new google.maps.LatLng(latitude, longitude));
+  marker.setAnimation(google.maps.Animation.DROP);
+  marker.setMap(map);
+
+  if (this.maxMarkers) {
+    this.markers.push(marker);
+  };
 };
