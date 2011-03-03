@@ -113,11 +113,11 @@ function HeatMapOverlay(map, options) {
 HeatMapOverlay.prototype = new CanvasOverlay();
 
 HeatMapOverlay.prototype.drawDot = function(point) {
-  var radius1 = 10;
+  var radius1 = 5;
   var radius2 = 20;
   var rgr = this.canvasContext.createRadialGradient(point.x, point.y, radius1, point.x, point.y, radius2);
   // the center of the radial gradient has .1 alpha value
-  rgr.addColorStop(0, 'rgba(0,0,0,0.4)');
+  rgr.addColorStop(0, 'rgba(0,0,0,0.3)');
   // and it fades out to 0
   rgr.addColorStop(0.9, 'rgba(0,0,0,0)');
   // drawing the gradient
