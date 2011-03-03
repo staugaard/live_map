@@ -23,7 +23,14 @@ CanvasOverlay.prototype.doFade = function() {
     var length = imageData.length;
     var value;
     for(var i = 3; i < length; i += 4) {
-      imageData[i] = imageData[i] * (1.0 - this.fade);
+      value = imageData[i] * (1.0 - this.fade);
+      // if (value < 1) {
+      //   imageData[i] = 0;
+      // } else if (value < 50) {
+      //   imageData[i] = value / 2;
+      // } else {
+        imageData[i] = value;
+      // };
     };
     image.data = imageData;
     this.canvasContext.putImageData(image, 0, 0);
@@ -40,6 +47,8 @@ CanvasOverlay.prototype.draw = function() {
 
   var canvas = this.canvas_;
   if (!canvas) {
+    this.width  = this.getMap().getDiv().offsetWidth;
+    this.height = this.getMap().getDiv().offsetHeight;
     canvas = document.createElement("canvas");
     canvas.setAttribute("width", this.width + "px");
     canvas.setAttribute("height", this.height + "px");
