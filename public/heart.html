@@ -34,8 +34,8 @@
         };
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-        overlays.push(new HeatMapOverlay(map, {fade: 0.01}));
-        //overlays.push(new ImageOverlay(map, {src: 'heart.png', fade: 0.1}));
+        //overlays.push(new HeatMapOverlay(map, {fade: 0.01}));
+        overlays.push(new ImageOverlay(map, {src: 'heart.png', fade: 0.1}));
         //overlays.push(new MarkerOverlay(map, {maxMarkers: 50}));
 
 
