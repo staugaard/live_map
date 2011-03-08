@@ -7,6 +7,7 @@
     </style>
     <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
     <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'></script>
+    <!--[if IE]><script src='js/excanvas.js'></script><![endif]-->
     <script src='js/swfobject.js'></script>
     <script src='js/FABridge.js'></script>
     <script src='js/web_socket.js'></script>
@@ -34,22 +35,24 @@
         };
         map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
+        //overlays.push(new HeatMapOverlay(map, {fade: 0.01}));
+        //overlays.push(new ImageOverlay(map, {src: 'heart.png', fade: 0.1}));
+        overlays.push(new MarkerOverlay(map, {maxMarkers: 50}));
 
-        if (document.createElement("canvas").getContext) {
-          overlays.push(new HeatMapOverlay(map, {fade: 0.01}));
-        } else {
-          overlays.push(new MarkerOverlay(map, {maxMarkers: 50}));
-        };
+        setInterval(function() {
+          var data = [Math.random() * 45, Math.random() * 45];
+          for (var i = 0; i < overlays.length; i++) {
+            overlays[i].addDot(data[0], data[1]);
+          };
+        }, 1000);
 
-
-        var ws = null;
+        var ws = null
 
         function liveMapConnect() {
-          //console.log('connecting...');
+          console.log('connecting...');
           ws = new WebSocket("ws://chat.zende.sk:9999/");
 
           ws.onmessage = function(e) {
-            //alert(e);
             var data = JSON.parse(e.data);
             for (var i = 0; i < overlays.length; i++) {
               overlays[i].addDot(data[0], data[1]);
@@ -57,11 +60,11 @@
           };
 
           ws.onclose = function() {
-            //alert("socket closed");
+            console.log("socket closed");
           };
 
           ws.onopen = function() {
-            //alert("connected...");
+            console.log("connected...");
           };
         };
 
